@@ -8,11 +8,17 @@ def __gather_signals(MACD: pandas.Series,
                      data: pandas.DataFrame
                      ) -> pandas.DataFrame:
 
+    # Create Series containing Buy/Sell signals
     buy_signals, sell_signals = find_signals(MACD, SIGNAL, data)
 
+    # Unify the signals into a DataFrame
+    # Set a date for each signal
+    # 0 - nothing happened
+    # 1 - buy
+    # -1 - sell
     signals = pandas.DataFrame({
         "Date": data["Date"],
-        "Signal": 0                 # Domyślnie brak sygnału
+        "Signal": 0                 
     })
 
     signals.loc[buy_signals, "Signal"] = 1
@@ -24,7 +30,7 @@ def __gather_signals(MACD: pandas.Series,
 def simulate_investing(MACD: pandas.Series, 
                        SIGNAL: pandas.Series, 
                        data: pandas.DataFrame
-                       ):
+                       ) -> int:
 
     BUY: int = 1
     SELL: int = -1
@@ -44,7 +50,7 @@ def simulate_investing(MACD: pandas.Series,
 
     for i in signals.index:
         
-        # Current price of EUR in UAH
+        # Current price of EUR in UAH and a corresponding date
         price = data["Close"][i]  
         date = data["Date"][i]
         
@@ -66,27 +72,24 @@ def simulate_investing(MACD: pandas.Series,
 
                 # Calculate profit/loss of the transaction
                 transaction_value = money - INITIAL_CAPITAL_UAH
-                if transaction_value > 0:
-                    profitable_transactions += 1
-                else:
-                    losing_transactions += 1
+
+                if transaction_value > 0: profitable_transactions += 1
+                else: losing_transactions += 1
+
                 total_transactions += 1
 
         # Update wallet change history
         wallet.append({"Date": date, "Close": money + (capital * price)})
 
-    print(f"Posiadane jednostki: {capital:.4f} EUR")
+    # Calculate effectiveness of MACD
+    success_rate = (profitable_transactions / total_transactions) * 100
 
-    # Calculate effectiveness of the strategy
-    if total_transactions > 0:
-        success_rate = (profitable_transactions / total_transactions) * 100
-    else:
-        success_rate = 0
-
+    print(f"Posiadane jednostki: {capital} EUR")
     print(f"Liczba transakcji zakończonych zyskiem: {profitable_transactions}")
     print(f"Liczba transakcji zakończonych stratą: {losing_transactions}")
-    print(f"Skuteczność strategii: {success_rate:.2f}%")
+    print(f"Skuteczność: {success_rate}%")
 
+    # Show the wallet change chart
     create_chart(pandas.DataFrame(wallet), 
                  MACD=MACD,
                  SIGNAL=SIGNAL,

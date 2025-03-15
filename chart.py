@@ -63,7 +63,7 @@ def create_chart(DATA: pandas.DataFrame,
 
         __create_history_chart(data_filtered, history_label, initial_capital)
 
-        # If MACD/SIGNAL signals wanted on this chart ...
+        # If Buy/Sell signals wanted on this chart ...
         if MACD is not None and SIGNAL is not None:
 
             find_signals(MACD, SIGNAL, data_filtered, data_filtered["Close"])
@@ -105,3 +105,4 @@ def create_chart(DATA: pandas.DataFrame,
             plt.annotate(f'Sell: {sell_value:.2f}', (sell_date, sell_value), textcoords="offset points", xytext=(0,-15), ha='center', fontsize=8, color='red')
             
     __set_metadata(title, history)
+    
