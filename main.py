@@ -13,6 +13,9 @@ DATA = pandas.read_csv('data/data.csv')
 
 # Define periods of time to show charts of
 DATES: list[dict[str: str]] = [
+    {"start_date": "2021-02-24", "end_date": "2025-03-10",
+     "buy_signal": None, "sell_signal": None},
+
     {"start_date": "2022-01-24", "end_date": "2022-09-24", 
     "buy_signal": "2022-05-09", "sell_signal": "2022-05-12"}, 
          
@@ -28,7 +31,7 @@ for period in DATES:
 
     DESCRIPTION: str = f"The Exchange Rate of the Euro (EUR) Against the Ukrainian Hryvnia (UAH) from {period['start_date']}, to {period['end_date']}"
 
-    # Show the price change chart from date A to date B: 
+    # Show the price change chart
     create_chart(DATA, 
                 title=DESCRIPTION,
                 start_date=period['start_date'],
@@ -55,7 +58,7 @@ for period in DATES:
                 history=True
                 )
     
-    # Show the Buy/Sell signals on the original chart, also show stored values for chosen signals
+    # Show the Buy/Sell signals on the original chart, also show Close values for chosen signals
     create_chart(DATA, 
                 MACD=pandas.Series(MACD), 
                 SIGNAL=pandas.Series(SIGNAL),
